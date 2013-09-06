@@ -1,0 +1,22 @@
+//This is a legal test case!!
+
+//Syntactically Valid test cases
+VAR alpha; beta;
+VAR i;
+alpha = 01 + 109;
+beta=-0.1;
+GO sin(89.9+0.1);
+TURN cos ( alpha * i );
+
+
+//Syntactically Invalid legal test cases
+
+JUMPFOR alpha111;
+STEP+TO-DO*alpha/
+BEGIN == END
+1.0 0.1
+a0l0pha
+s q r t ;)
+
+
+// this    is    the    end
