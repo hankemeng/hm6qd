@@ -38,6 +38,8 @@
 #define SMALLER 291
 #define EQUALS 292
 
+#define PROCEDURE 293
+
 
 
 typedef union YYSTYPE

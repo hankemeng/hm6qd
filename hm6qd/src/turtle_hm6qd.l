@@ -4,6 +4,8 @@
 #include "token.h"
 %}
 
+ID [a-z]+
+
 %%
 
 \/\/.*          ;
@@ -26,6 +28,9 @@ ELSE            return ELSE;
 ENDIF           return ENDIF;
 WHILE           return WHILE;
 ENDWHILE        return ENDWHILE;
+{ID}\({ID}*(", "{ID})*\)   { fprintf(stderr,"Procedure\n");
+                             return PROCEDURE;
+                            }
 
 sin             return SIN;
 cos             return COS;
