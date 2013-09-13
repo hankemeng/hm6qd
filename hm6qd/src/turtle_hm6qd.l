@@ -9,7 +9,7 @@ ID [a-z]+
 %%
 
 \/\/.*          ;
-[[:space:]]     ;
+[[:space:]]     ; 
 
 GO              return GO;
 TURN            return TURN; 
