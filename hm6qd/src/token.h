@@ -39,6 +39,9 @@
 #define EQUALS 292
 
 #define PROCEDURE 293
+#define OPENBRACKET 294
+#define CLOSEBRACKET 295
+#define COMMA 296
 
 
 typedef union YYSTYPE

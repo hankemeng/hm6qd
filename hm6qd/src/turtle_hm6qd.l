@@ -25,12 +25,10 @@ END             return CEND;
 IF              return IF;
 THEN            return THEN;
 ELSE            return ELSE;
-ENDIF           return ENDIF;
 WHILE           return WHILE;
-ENDWHILE        return ENDWHILE;
-{ID}\({ID}*(", "{ID})*\)   { fprintf(stderr,"Procedure\n");
-                             return PROCEDURE;
-                            }
+PROCEDURE       return PROCEDURE;
+
+
 
 sin             return SIN;
 cos             return COS;
@@ -44,6 +42,9 @@ sqrt            return SQRT;
 \(              return OPEN;
 \)              return CLOSE;
 
+\{              return OPENBRACKET;
+\}              return CLOSEBRACKET;
+,               return COMMA;
 \>=             return GREATEREQUAL;
 \>              return GREATER;
 \<=             return SMALLEREQUAL;
