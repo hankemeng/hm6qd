@@ -1,0 +1,5 @@
+//Declaration after statements is not allowed
+GO sqrt cos45;
+
+VAR a;
+a=0;

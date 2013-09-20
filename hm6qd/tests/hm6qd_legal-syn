@@ -1,0 +1,25 @@
+VAR var;
+VAR a;
+
+//parser cannot tell whether variable has been declared
+a=(a*(b+c)-d)/e;
+var=0.1;
+
+//both orders are fine, no need for parenthesis
+var=sin cos sqrt a;
+var=sqrt cos sin a;
+
+
+BEGIN 
+      a=a;
+      GO a;
+      JUMP (-0.11)+(-(-22));
+      TURN cos(sin 45); 
+END
+
+FOR a=0.1 STEP 0.2 TO 10
+DO 
+BEGIN
+	//Empty statement list
+END
+
