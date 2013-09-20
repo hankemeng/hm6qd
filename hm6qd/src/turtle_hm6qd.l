@@ -50,6 +50,7 @@ sqrt            return SQRT;
 \<=             return SMALLEREQUAL;
 \<              return SMALLER;
 ==              return EQUALS;
+!=              return UNEQUAL;
 =               return ASSIGN;
 
 

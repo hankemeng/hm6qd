@@ -37,6 +37,7 @@
 #define SMALLEREQUAL 290
 #define SMALLER 291
 #define EQUALS 292
+#define UNEQUAL 297
 
 #define PROCEDURE 293
 #define OPENBRACKET 294
