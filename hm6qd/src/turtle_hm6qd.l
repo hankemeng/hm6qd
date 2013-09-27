@@ -19,15 +19,17 @@ FOR             return FOR;
 STEP            return STEP;
 TO              return TO;
 DO              return DO;
-BEGIN           return CBEGIN;
-END             return CEND;
+BEGIN           return COPEN;
+END             return CCLOSE;
 
 IF              return IF;
 THEN            return THEN;
 ELSE            return ELSE;
 WHILE           return WHILE;
 PROCEDURE       return PROCEDURE;
-
+CALL            return CALL;
+PARAM           { //printf("PARAM seen"); 
+                  return PARAM; };
 
 
 sin             return SIN;

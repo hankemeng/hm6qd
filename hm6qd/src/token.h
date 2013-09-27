@@ -8,8 +8,8 @@
 #define STEP 263
 #define TO 264
 #define DO 265
-#define CBEGIN 266
-#define CEND 267
+#define COPEN 266
+#define CCLOSE 267
 #define SIN 268
 #define COS 269
 #define SQRT 270
@@ -28,22 +28,21 @@
 #define IF 282
 #define THEN 283
 #define ELSE 284
-#define ENDIF 285
-#define WHILE 286
-#define ENDWHILE 287
+#define WHILE 285
 
-#define GREATEREQUAL 288
-#define GREATER 289
-#define SMALLEREQUAL 290
-#define SMALLER 291
+#define GREATER 288
+#define GREATEREQUAL 289
+#define SMALLER 290
+#define SMALLEREQUAL 291
 #define EQUALS 292
-#define UNEQUAL 297
+#define UNEQUAL 293
 
-#define PROCEDURE 293
-#define OPENBRACKET 294
-#define CLOSEBRACKET 295
-#define COMMA 296
-
+#define PROCEDURE 294
+#define OPENBRACKET 286
+#define CLOSEBRACKET 287
+#define COMMA 299
+#define PARAM 295
+#define CALL 296
 
 typedef union YYSTYPE
 { int i; node *n; double d;}
