@@ -1,0 +1,28 @@
+VAR degree;
+VAR start;
+
+degree=0;
+start=0;
+JUMP 400;
+TURN 90;
+JUMP 300;
+
+
+PROCEDURE circle {
+	degree=0;
+	WHILE (degree<360){
+	      GO 5;
+	      TURN -10;
+	      degree=degree+10;
+	}
+}
+
+WHILE (start<360) {
+      CALL circle;
+      start = start+5;
+      GO 5;
+      TURN 5;
+}
+
+IF (start==360)
+   CALL circle;
