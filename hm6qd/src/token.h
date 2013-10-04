@@ -40,7 +40,6 @@
 #define PROCEDURE 294
 #define OPENBRACKET 286
 #define CLOSEBRACKET 287
-#define COMMA 299
 #define PARAM 295
 #define CALL 296
 

@@ -46,7 +46,6 @@ sqrt            return SQRT;
 
 \{              return OPENBRACKET;
 \}              return CLOSEBRACKET;
-,               return COMMA;
 \>=             return GREATEREQUAL;
 \>              return GREATER;
 \<=             return SMALLEREQUAL;
