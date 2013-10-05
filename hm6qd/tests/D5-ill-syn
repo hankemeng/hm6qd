@@ -1,0 +1,42 @@
+//Empty Statement 
+;
+
+//Declaration after statements
+GO a;
+VAR b;
+
+//declare multiple variables seperated by comma
+VAR a,b;
+//initialize variables
+VAR a=0;
+
+//factor-> MINUS atomic; atomic can only be surrounded by ()
+a=-sin 0.1;
+
+//floating points without integer part is not accepted by lexer
+a=.1;
+
+GO sqrt + a; //This is accepted
+
+//booleans in IF()
+IF (a) {}
+
+//single clause without brackets
+IF (a!=b) 
+   GO somewhere;
+WHILE (x=1) 
+   TURN left;
+
+//multiple parenthesis in condition
+IF ((a==b)) {}
+
+//Cannot handle AND, OR, etc.
+IF (a==b || a==c) {}
+
+//PARAM can appear outside a procedure declaration
+
+//cannot handle ++, --, +=, -=
+i++; i--; i+=1; i-=1;
+
+/*Block 
+comments*/

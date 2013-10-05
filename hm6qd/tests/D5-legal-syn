@@ -1,0 +1,40 @@
+VAR a;
+VAR b 
+;
+
+a=x+(x-x)*x/0.1;
+GO sqrt + a +sin cos a; 
+TURN cos sin sqrt a;
+
+FOR i=0/0
+STEP 0
+TO 0
+DO BEGIN 
+   BEGIN
+	//empty statement list
+   END
+END
+
+
+IF (a==b) THEN {
+}ELSE{
+BEGIN
+IF (a>b) {} ELSE{}
+END
+}
+
+WHILE ((a*-b)/c!=x){
+    a=a+1;
+}
+
+//recursive function
+PROCEDURE proc{
+     IF (a==b) {} 
+     CALL proc PARAM PARAM;
+}
+
+//procedure declaration inside procedure is allowed
+PROCEDURE proc{
+	  PROCEDURE proc{
+	  }
+}
