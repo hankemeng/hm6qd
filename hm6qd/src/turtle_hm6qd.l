@@ -1,19 +1,22 @@
 
 %{
 #include "symtab.h"
-#include "token.h"
+//#include "token.h"
+#include "turtle_hm6qd.tab.h"
 %}
 
 ID [a-z]+
 
 %%
 
+\/\*([^\*]|[\r\n]|(\*([^\/]|[\r\n])))*\*\/ ;
 \/\/.*          ;
 [[:space:]]     ; 
 
 GO              return GO;
 TURN            return TURN; 
 VAR             return VAR;
+var             return VAR;
 JUMP            return JUMP;
 FOR             return FOR;
 STEP            return STEP;
@@ -36,6 +39,20 @@ sin             return SIN;
 cos             return COS;
 sqrt            return SQRT;
 
+
+&&              return AND;
+\|\|            return OR;
+!               return NOT;
+NOT             return NOT;
+not             return NOT;
+XOR             return XOR;
+xor             return XOR;
+\+\+            return INCREMENT;
+--              return DECREMENT;
+\+=             return ADDEQUAL;
+-=              return SUBEQUAL;
+
+,               return COMMA;
 ;               return SEMICOLON;
 \+              return PLUS;
 -               return MINUS;
@@ -55,7 +72,12 @@ sqrt            return SQRT;
 =               return ASSIGN;
 
 
-[a-z]+          { yylval.n = lookup(yytext); 
+true            return TRUE;
+false           return FALSE;
+break           return BREAK;
+continue        return CONTINUE;
+
+[a-z][a-z0-9]*          { yylval.n = lookup(yytext); 
                   if (yylval.n==NULL)
 		    yylval.n = insert(yytext);
                   return ID;

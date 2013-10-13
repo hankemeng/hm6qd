@@ -1,0 +1,28 @@
+// if-then-else
+
+VAR myvar;
+
+myvar=4;
+//should take ELSE and draw a triangle
+
+IF(myvar>=7)
+THEN{
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+}
+ELSE{
+	GO 30;
+	TURN 120;
+	GO 30;
+	TURN 120;
+	GO 30;
+	TURN 120;
+
+}
+

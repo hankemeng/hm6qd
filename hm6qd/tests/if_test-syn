@@ -1,0 +1,63 @@
+//other kinds of conditionals for if-then-else statements
+
+//should draw a rectangle
+IF(true){
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90; 
+	GO 40;
+	TURN 90;
+}
+
+//should draw another rectangle
+IF(not(true)){
+	GO 50;
+	TURN 90;
+	GO 50;
+	TURN 90;
+	GO 50;
+	TURN 90; 
+	GO 50;
+	TURN 90;
+}
+
+//should draw another rectangle
+IF(true || false){
+	GO 50;
+	TURN 90;
+	GO 50;
+	TURN 90;
+	GO 50;
+	TURN 90; 
+	GO 50;
+	TURN 90;
+}
+
+//should do nothing
+IF(false){
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90; 
+	GO 40;
+	TURN 90;
+
+}
+
+//should do nothing
+IF(true && false){
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90; 
+	GO 40;
+	TURN 90;
+
+}

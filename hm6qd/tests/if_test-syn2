@@ -1,0 +1,18 @@
+//nested if statment
+
+VAR myvar;
+myvar=4;
+
+//should draw a rectangle
+IF(myvar==4){
+	GO 40;
+	TURN 90;
+	GO 40;
+	TURN 90;
+	IF(myvar==4){
+		GO 40;
+		TURN 90; 
+		GO 40;
+		TURN 90;
+	}
+}

@@ -1,0 +1,21 @@
+//single statement within if
+
+VAR myvar;
+
+myvar=4;
+
+IF(true)
+	GO 50;
+
+TURN 90;
+
+IF(myvar==4)
+	GO 50;
+
+TURN 90;
+
+IF(myvar!=4){
+
+}
+ELSE
+	GO 50;

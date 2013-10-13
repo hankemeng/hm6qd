@@ -1,0 +1,17 @@
+//other kinds of parameters for procedure calls
+VAR myvar = 80;
+JUMP 80;
+
+//declaring drawing a 4 sided shape with varying angles (with four parameters)
+PROCEDURE poly {
+GO 40;
+TURN PARAM;
+GO 40;
+TURN PARAM;
+GO 40;
+TURN PARAM;
+GO 40;
+TURN PARAM;
+}
+
+CALL poly 40+40 1000/10 myvar sqrt(10000);
