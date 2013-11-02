@@ -4,9 +4,6 @@
  * statements in the parse tree.  For each statment in the
  * language (for, if, return, etc.) there is a corresponding
  * node class for that construct. 
- *
- * pp2: You will need to add new expression and statement node c
- * classes for the additional grammar elements (Switch/Postfix)
  */
 
 
@@ -127,5 +124,31 @@ class PrintStmt : public Stmt
     void PrintChildren(int indentLevel);
 };
 
+
+class IntConstant;
+
+class Case : public Node
+{
+  protected:
+    IntConstant *value;
+    List<Stmt*> *stmts;
+    
+  public:
+    Case(IntConstant *v, List<Stmt*> *stmts);
+    const char *GetPrintNameForNode() { return value ? "Case" :"Default"; }
+    void PrintChildren(int indentLevel);
+};
+
+class SwitchStmt : public Stmt
+{
+  protected:
+    Expr *expr;
+    List<Case*> *cases;
+    
+  public:
+    SwitchStmt(Expr *e, List<Case*> *cases);
+    const char *GetPrintNameForNode() { return "SwitchStmt"; }
+    void PrintChildren(int indentLevel);
+};
 
 #endif

@@ -1,0 +1,6 @@
+
+*** Error line 2.
+  Print("hello world");
+  ^^^^^
+*** syntax error
+
