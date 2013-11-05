@@ -72,7 +72,7 @@ void Program::Check() {
      *      checking itself, which makes for a great use of inheritance
      *      and polymorphism in the node classes.
      */
-    nodeScope=new Scope();
+    nodeScope=new Scope(this);
     decls-> DeclareAll(nodeScope);
     decls->CheckAll();
 }

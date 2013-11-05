@@ -51,6 +51,7 @@ class Node
     virtual void Check() {}
     virtual Scope * PrepareScope() {return NULL; }//???
     Scope *nodeScope;
+    Decl* FindDecl(Identifier* idToFind);
 };
    
 

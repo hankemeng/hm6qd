@@ -4,6 +4,12 @@
 
 Scope::Scope(){
     table = new Hashtable<Decl*>;
+    node=NULL;
+}
+
+Scope::Scope(Node* n){
+    table = new Hashtable<Decl*>;
+    node=n;
 }
 
 Decl * Scope::Lookup(Identifier *id) {
@@ -22,5 +28,9 @@ bool Scope::Declare(Decl *dec) {
 }
 
 void Scope::CopyFromScope(Scope *other, ClassDecl *cd) {
-
+    Iterator<Decl*> iter = other->table->GetIterator();
+    Decl *decl;
+    while ((decl = iter.GetNextValue()) != NULL) {
+        table->Enter(decl->id->name, decl);
+    }
 }

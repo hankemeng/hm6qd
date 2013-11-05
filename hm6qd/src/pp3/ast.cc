@@ -7,6 +7,7 @@
 #include "ast_decl.h"
 #include <string.h> // strdup
 #include <stdio.h>  // printf
+#include "Scope.h"
 
 Node::Node(yyltype loc) {
     location = new yyltype(loc);
@@ -22,3 +23,13 @@ Identifier::Identifier(yyltype loc, const char *n) : Node(loc) {
     name = strdup(n);
 } 
 
+Decl* Node::FindDecl(Identifier* idToFind){
+    if (!nodeScope) PrepareScope();
+    Decl* result = nodeScope->Lookup(idToFind);
+    if (result) return result;
+    //traverse up to parent
+    if (parent) {
+        return parent->FindDecl(idToFind);
+    }
+    return NULL;
+}

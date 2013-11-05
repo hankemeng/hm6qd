@@ -115,15 +115,43 @@ void ClassDecl::Check(){
 }
 
 void InterfaceDecl::Check(){
-    
+    //To be implemented
 }
 
 void FnDecl::Check(){
+    returnType->Check();
+    if (body){
+        nodeScope=new Scope(this);
+        formals->DeclareAll(nodeScope);
+        formals->CheckAll();
+        body->Check();
+    }
     
 }
 
 Scope *ClassDecl::PrepareScope()
 {
+    if (nodeScope) return nodeScope;
+    nodeScope=new Scope(this);
+    //Extends
+    if (extends) {
+        ClassDecl* base=dynamic_cast<ClassDecl*> (parent->FindDecl(extends->GetId()));
+        if (base) {
+            nodeScope->CopyFromScope(base->PrepareScope(), this);
+        }
+    }
+    //interfaces
+    for (int i=0; i<implements->NumElements(); i++){
+        NamedType *in = implements->Nth(i);
+        ClassDecl* interface =dynamic_cast<ClassDecl*>(parent->FindDecl(in->GetId())); //why in->FindDecl??
+        if (interface) {
+            nodeScope->CopyFromScope(interface->PrepareScope(), this);
+        }
+    }
+    //body
+    members->DeclareAll(nodeScope);
     
-    return NULL;
+    return nodeScope;
 }
+
+
