@@ -1,0 +1,5 @@
+#include "Scope.h"
+
+Scope::Scope(){
+  table = new Hashtable<Decl*>();
+}
