@@ -59,8 +59,8 @@ void ArrayType::Check(){
 /**************** Is Class, etc. ********************/
 Decl * NamedType::GetDeclForType() {
     if (!cachedDecl && !isError) {
-        Decl *declForName = nodeScope-> Lookup(id); //Wrong!! need traverse to parent
-//        if (declForName && (declForName->IsClassDecl() || declForName->IsInterfaceDecl()))
+        Decl *declForName = FindDecl(id);
+        if (declForName && (declForName->IsClassDecl() || declForName->IsInterfaceDecl()))
             cachedDecl = declForName;
     }
     return cachedDecl;

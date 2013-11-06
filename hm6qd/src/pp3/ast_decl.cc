@@ -115,7 +115,8 @@ void ClassDecl::Check(){
 }
 
 void InterfaceDecl::Check(){
-    //To be implemented
+    PrepareScope();
+    members->CheckAll();
 }
 
 void FnDecl::Check(){
@@ -154,4 +155,9 @@ Scope *ClassDecl::PrepareScope()
     return nodeScope;
 }
 
-
+Scope *InterfaceDecl::PrepareScope(){
+    if (nodeScope) return nodeScope;
+    nodeScope=new Scope(this);
+    members->DeclareAll(nodeScope);
+    return nodeScope;
+}

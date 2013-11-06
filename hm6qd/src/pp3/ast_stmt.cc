@@ -78,7 +78,7 @@ void Program::Check() {
 }
 
 void StmtBlock::Check(){
-    nodeScope = new Scope();
+    nodeScope = new Scope(this);
     decls->DeclareAll(nodeScope);
     decls->CheckAll();
     stmts->CheckAll();

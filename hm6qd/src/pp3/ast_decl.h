@@ -34,6 +34,7 @@ public:
     bool IsMethodDecl(){return false;}
     bool IsClassDecl(){return false;}
     bool IsInterfaceDecl(){return false;}
+    bool IsFnDecl(){return false;}
 };
 
 class VarDecl : public Decl
@@ -72,6 +73,7 @@ public:
     InterfaceDecl(Identifier *name, List<Decl*> *members);
     void Check();
     bool IsInterfaceDecl(){return true;}
+    Scope * PrepareScope();
 };
 
 class FnDecl : public Decl
@@ -86,6 +88,7 @@ public:
     void SetFunctionBody(Stmt *b);
     bool ConflictsWithPrevious(Decl *prev);
     bool IsMethodDecl();
+    bool IsFnDecl(){return true;}
     bool MatchPrototype(FnDecl *prototype);
     void Check();
 };
