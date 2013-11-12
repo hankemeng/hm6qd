@@ -1,0 +1,4 @@
+//No declaration for function '' found
+void main(){
+     func(param);
+}

@@ -1,0 +1,16 @@
+class A extends B{
+	
+}
+class B{}
+
+A func(int x, int y){
+	
+}
+
+void main(){
+	A[] a ;
+	int b;
+	//a = NewArray(10.5,A);
+	a||b;
+	func(a);
+}
