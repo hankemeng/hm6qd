@@ -27,7 +27,8 @@ class Expr : public Stmt
     Type * type;
     Expr(yyltype loc) : Stmt(loc) {type=NULL;}
     Expr() : Stmt() {type=NULL;}
-    virtual bool InferType(){return false;}
+    virtual Type* InferType(){return type;}
+    virtual bool isArrayType(){return false;}
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -107,14 +108,14 @@ class ArithmeticExpr : public CompoundExpr
   public:
     ArithmeticExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     ArithmeticExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
-    bool InferType();
+    Type* InferType();
 };
 
 class RelationalExpr : public CompoundExpr 
 {
   public:
     RelationalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
-    bool InferType();
+    Type* InferType();
 };
 
 class EqualityExpr : public CompoundExpr 
@@ -122,7 +123,7 @@ class EqualityExpr : public CompoundExpr
   public:
     EqualityExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "EqualityExpr"; }
-    bool InferType();
+    Type* InferType();
 };
 
 class LogicalExpr : public CompoundExpr 
@@ -131,7 +132,7 @@ class LogicalExpr : public CompoundExpr
     LogicalExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     LogicalExpr(Operator *op, Expr *rhs) : CompoundExpr(op,rhs) {}
     const char *GetPrintNameForNode() { return "LogicalExpr"; }
-    bool InferType();
+    Type* InferType();
 };
 
 class AssignExpr : public CompoundExpr 
@@ -147,7 +148,6 @@ class LValue : public Expr
   public:
     LValue(yyltype loc) : Expr(loc) {/*printf("LValue\n");*/}
     // void Check(); //???
-
 };
 
 class This : public Expr 
@@ -156,7 +156,7 @@ class This : public Expr
     ClassDecl* decl;
     This(yyltype loc) : Expr(loc) {}
     void Check(); 
-    bool InferType();
+    Type* InferType();
 };
 
 class ArrayAccess : public LValue 
@@ -167,7 +167,7 @@ class ArrayAccess : public LValue
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
     void Check();
-    bool InferType();
+    Type* InferType();
 };
 
 /* Note that field access is used both for qualified names
@@ -180,10 +180,14 @@ class FieldAccess : public LValue
   protected:
     Expr *base; // will be NULL if no explicit base
     Identifier *field;
+    Decl * baseDecl;
+    Decl * fieldDecl;
     
   public:
     FieldAccess(Expr *base, Identifier *field); //ok to pass NULL base
     void Check();
+    // bool isArrayType();
+    Type* InferType();
 };
 
 /* Like field access, call is used both for qualified base.field()

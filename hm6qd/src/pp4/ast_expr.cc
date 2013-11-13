@@ -69,7 +69,9 @@ void ArrayAccess::Check(){
      // if (base->type!=ArrayType){
      //    printf("base->type!=ArrayType\n");
      // }
-
+    if (!base->isArrayType()){
+        ReportError::BracketsOnNonArray(base);
+    }
 
 
     if (subscript->type!=Type::intType){
@@ -88,17 +90,19 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
 void FieldAccess::Check(){
     // printf("checking FieldAccess\n");
     if (base){
-        // ???
+        // find Decl based on Expr:
         // base->Check();
+        // base->FindDecl();
 
     }else{
         //Check variable declaration
-        Decl* decl= FindDecl(field);
-        if (!decl) {
+        if (!fieldDecl)
+            fieldDecl= FindDecl(field);
+        if (!fieldDecl) {
             ReportError::IdentifierNotDeclared(field, LookingForVariable);
         }else{
             //getting type of the variable
-            type=dynamic_cast<VarDecl*>(decl)->GetDeclaredType();
+            InferType();
         }
     }
 }
@@ -112,6 +116,11 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
 }
 
 void Call::Check(){
+    // base->InferType();
+    // for (int i=0; i<actuals->NumElements(); i++){
+    //     actuals->Nth(i)->InferType();
+    // }
+
     //have to fix field access!!
     //Undeclared function
     FnDecl *decl = dynamic_cast<FnDecl*> (FindDecl(field));
@@ -130,10 +139,10 @@ void Call::Check(){
     {
         if (!actuals->Nth(i) || !decl->formals->Nth(i))
             break;
-        Type * given=actuals->Nth(i)->type;
+
+       Type * given=actuals->Nth(i)->InferType();
         Type * expected=decl->formals->Nth(i)->GetDeclaredType();
-        if (expected!=(given)){
-             printf("arguments check\n");
+        if (expected!=given){
            ReportError::ArgMismatch(actuals->Nth(i), i, given, expected);
         }
     }
@@ -191,7 +200,8 @@ void This::Check(){
     ReportError::ThisOutsideClassScope(this);
 }
 
-bool ArithmeticExpr::InferType(){
+Type* ArithmeticExpr::InferType(){
+    if (type) return type;
     if (left && !left->type){
         left->InferType();
     }
@@ -203,7 +213,7 @@ bool ArithmeticExpr::InferType(){
         if (right->type->IsEquivalentTo(left->type)){
             if (right->type==Type::intType || right->type==Type::doubleType){
                 type=right->type;
-                return true;
+                return type;
             }
         }    
         //else left exists and not equivalent
@@ -215,16 +225,17 @@ bool ArithmeticExpr::InferType(){
         // printf("unary operation\n");
         if (right->type==Type::intType || right->type==Type::doubleType){
             type=right->type;
-            return true;
+            return type;
         }
         type=Type::errorType;
         ReportError::IncompatibleOperand(op, right->type);
     }
 
-    return false;
+    return type;
 }
 
-bool RelationalExpr::InferType(){
+Type* RelationalExpr::InferType(){
+    if (type) return type;
     if (left && !left->type){
         left->InferType();
     }
@@ -236,7 +247,7 @@ bool RelationalExpr::InferType(){
         if (right->type->IsEquivalentTo(left->type)){
             if (right->type==Type::intType || right->type==Type::doubleType){
                 type=Type::boolType;
-                return true;
+                return type;
             }
         }    
         //else left exists and not equivalent
@@ -248,11 +259,12 @@ bool RelationalExpr::InferType(){
         ReportError::IncompatibleOperands( op, Type::voidType,right->type);
     }
 
-    return false;
+    return type;
 }
 
-bool EqualityExpr::InferType(){
-    if (left && !left->type){
+Type* EqualityExpr::InferType(){
+    if (type) return type;
+   if (left && !left->type){
         left->InferType();
     }
     if (right && !right->type){
@@ -263,7 +275,7 @@ bool EqualityExpr::InferType(){
         if (right->type->IsEquivalentTo(left->type) || left->type->IsEquivalentTo(right->type)){
                 //Objects & null
                 type=Type::boolType;
-                return true;
+                return type;
         }    
         //else left exists and not equivalent
         type=Type::errorType;
@@ -274,10 +286,11 @@ bool EqualityExpr::InferType(){
         ReportError::IncompatibleOperands( op, Type::voidType,right->type);
     }
 
-    return false;
+    return type;
 }
 
-bool LogicalExpr::InferType(){
+Type* LogicalExpr::InferType(){
+    if (type) return type;
     // printf("InferType()\n");
     if (left && !left->type){
         left->InferType();
@@ -290,7 +303,7 @@ bool LogicalExpr::InferType(){
         //two operands
         if (right->type==Type::boolType || right->type==Type::boolType){
             type=Type::boolType;
-            return true;
+            return type;
         }
         //else left exists and not equivalent
         type=Type::errorType;
@@ -301,13 +314,13 @@ bool LogicalExpr::InferType(){
         // printf("unary operation\n");
         if (right->type==Type::boolType){
             type=Type::boolType;
-            return true;
+            return type;
         }
         type=Type::errorType;
         ReportError::IncompatibleOperand(op, right->type);
     }
 
-    return false;
+    return type;
 }
 
 void AssignExpr::Check(){
@@ -319,13 +332,26 @@ void AssignExpr::Check(){
 
 }
 
-bool This::InferType(){
+Type* This::InferType(){
+    if (type) return type;
     type=decl->GetDeclaredType();
-    return true;
+    return type;
 }
 
-bool ArrayAccess::InferType(){
+Type* ArrayAccess::InferType(){
+    if (type) return type;
     
 
-return false;
+    return type;
 }
+
+Type* FieldAccess::InferType(){
+    if (type) return type;
+    if (!fieldDecl)
+        fieldDecl= FindDecl(field);
+    if (fieldDecl)
+        type=dynamic_cast<VarDecl*>(fieldDecl)->GetDeclaredType();
+
+    return type;
+}
+
