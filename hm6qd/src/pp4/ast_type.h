@@ -27,8 +27,8 @@ class Type : public Node
     Type(const char *str);
     
     virtual void PrintToStream(std::ostream& out) { out << typeName; }
-    friend std::ostream& operator<<(std::ostream& out, Type *t) { return out << t->typeName; }
-    // friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
+    // friend std::ostream& operator<<(std::ostream& out, Type *t) { return out << t->typeName; }
+    friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
     // friend std::ostream& operator<<(std::ostream& out, Identifier *id) { return out << id->name; }
     virtual bool IsEquivalentTo(Type *other) { return this == other; }
 };

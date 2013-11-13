@@ -12,6 +12,7 @@ void main(){
 	int b;
 	double c;
 	//a = NewArray(10.5,A);
-	a||b;
-	func(c,b);
+	//a||b;
+	//func(c,b);
+	Print(b+b, b+c, a);
 }

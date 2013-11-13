@@ -71,6 +71,17 @@ PrintStmt::PrintStmt(List<Expr*> *a) {
     (args=a)->SetParentAll(this);
 }
 
+void PrintStmt::Check(){
+    args->CheckAll();
+    for (int i=0; i<args->NumElements(); i++){
+        Type* type=args->Nth(i)->InferType();
+        if (type!=Type::intType && type!=Type::boolType && type!=Type::stringType){
+            ReportError::PrintArgMismatch(args->Nth(i), i, type);
+        }
+
+    }
+}
+
 Case::Case(IntConstant *v, List<Stmt*> *s) {
     Assert(s != NULL);
     value = v;

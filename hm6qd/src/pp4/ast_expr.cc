@@ -66,15 +66,15 @@ void ArrayAccess::Check(){
     base->Check();
     subscript->Check();
     // To be implemented!! [] can only be applied to arrays
-     // if (base->type!=ArrayType){
-     //    printf("base->type!=ArrayType\n");
+     // if (base->InferType()!=ArrayType){
+     //    printf("base->InferType()!=ArrayType\n");
      // }
     if (!base->isArrayType()){
         ReportError::BracketsOnNonArray(base);
     }
 
 
-    if (subscript->type!=Type::intType){
+    if (subscript->InferType()!=Type::intType){
         ReportError::SubscriptNotInteger(subscript);
     }
 }
@@ -164,7 +164,7 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
 void NewArrayExpr::Check(){
     size->Check();
     elemType->Check();
-    if (size->type!=Type::intType){
+    if (size->InferType()!=Type::intType){
         ReportError::NewArraySizeNotInteger(size);
     }
 }
@@ -202,33 +202,33 @@ void This::Check(){
 
 Type* ArithmeticExpr::InferType(){
     if (type) return type;
-    if (left && !left->type){
+    if (left && !left->InferType()){
         left->InferType();
     }
-    if (right && !right->type){
+    if (right && !right->InferType()){
         right->InferType();
     }
     if (left){
         //two operands
-        if (right->type->IsEquivalentTo(left->type)){
-            if (right->type==Type::intType || right->type==Type::doubleType){
-                type=right->type;
+        if (right->InferType()->IsEquivalentTo(left->InferType())){
+            if (right->InferType()==Type::intType || right->InferType()==Type::doubleType){
+                type=right->InferType();
                 return type;
             }
         }    
         //else left exists and not equivalent
         type=Type::errorType;
-        ReportError::IncompatibleOperands(op, left->type, right->type);
+        ReportError::IncompatibleOperands(op, left->InferType(), right->InferType());
 
     }else{
         //unary operation
         // printf("unary operation\n");
-        if (right->type==Type::intType || right->type==Type::doubleType){
-            type=right->type;
+        if (right->InferType()==Type::intType || right->InferType()==Type::doubleType){
+            type=right->InferType();
             return type;
         }
         type=Type::errorType;
-        ReportError::IncompatibleOperand(op, right->type);
+        ReportError::IncompatibleOperand(op, right->InferType());
     }
 
     return type;
@@ -236,27 +236,27 @@ Type* ArithmeticExpr::InferType(){
 
 Type* RelationalExpr::InferType(){
     if (type) return type;
-    if (left && !left->type){
+    if (left && !left->InferType()){
         left->InferType();
     }
-    if (right && !right->type){
+    if (right && !right->InferType()){
         right->InferType();
     }
     if (left){
         //two operands
-        if (right->type->IsEquivalentTo(left->type)){
-            if (right->type==Type::intType || right->type==Type::doubleType){
+        if (right->InferType()->IsEquivalentTo(left->InferType())){
+            if (right->InferType()==Type::intType || right->InferType()==Type::doubleType){
                 type=Type::boolType;
                 return type;
             }
         }    
         //else left exists and not equivalent
         type=Type::errorType;
-        ReportError::IncompatibleOperands(op, left->type, right->type);
+        ReportError::IncompatibleOperands(op, left->InferType(), right->InferType());
 
     }else{
         type=Type::errorType;
-        ReportError::IncompatibleOperands( op, Type::voidType,right->type);
+        ReportError::IncompatibleOperands( op, Type::voidType,right->InferType());
     }
 
     return type;
@@ -264,26 +264,26 @@ Type* RelationalExpr::InferType(){
 
 Type* EqualityExpr::InferType(){
     if (type) return type;
-   if (left && !left->type){
+   if (left && !left->InferType()){
         left->InferType();
     }
-    if (right && !right->type){
+    if (right && !right->InferType()){
         right->InferType();
     }
     if (left){
         //two operands
-        if (right->type->IsEquivalentTo(left->type) || left->type->IsEquivalentTo(right->type)){
+        if (right->InferType()->IsEquivalentTo(left->InferType()) || left->InferType()->IsEquivalentTo(right->InferType())){
                 //Objects & null
                 type=Type::boolType;
                 return type;
         }    
         //else left exists and not equivalent
         type=Type::errorType;
-        ReportError::IncompatibleOperands(op, left->type, right->type);
+        ReportError::IncompatibleOperands(op, left->InferType(), right->InferType());
 
     }else{
         type=Type::errorType;
-        ReportError::IncompatibleOperands( op, Type::voidType,right->type);
+        ReportError::IncompatibleOperands( op, Type::voidType,right->InferType());
     }
 
     return type;
@@ -292,32 +292,32 @@ Type* EqualityExpr::InferType(){
 Type* LogicalExpr::InferType(){
     if (type) return type;
     // printf("InferType()\n");
-    if (left && !left->type){
+    if (left && !left->InferType()){
         left->InferType();
     }
-    if (right && !right->type){
+    if (right && !right->InferType()){
         right->InferType();
     }
 
     if (left){
         //two operands
-        if (right->type==Type::boolType || right->type==Type::boolType){
+        if (right->InferType()==Type::boolType || right->InferType()==Type::boolType){
             type=Type::boolType;
             return type;
         }
         //else left exists and not equivalent
         type=Type::errorType;
-        ReportError::IncompatibleOperands(op, left->type, right->type);
+        ReportError::IncompatibleOperands(op, left->InferType(), right->InferType());
 
     }else{
         //unary operation
         // printf("unary operation\n");
-        if (right->type==Type::boolType){
+        if (right->InferType()==Type::boolType){
             type=Type::boolType;
             return type;
         }
         type=Type::errorType;
-        ReportError::IncompatibleOperand(op, right->type);
+        ReportError::IncompatibleOperand(op, right->InferType());
     }
 
     return type;
