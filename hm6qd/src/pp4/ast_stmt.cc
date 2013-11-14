@@ -64,12 +64,35 @@ void IfStmt::Check() {
     if (elseBody) elseBody->Check();
 }
 
+void BreakStmt::Check(){
+    Node* current=this;
+    while((current=current->GetParent())){
+        if (current->IsLoopStmt()) return;
+    }
+    ReportError::BreakOutsideLoop(this);
+}
 
 ReturnStmt::ReturnStmt(yyltype loc, Expr *e) : Stmt(loc) { 
     Assert(e != NULL);
     (expr=e)->SetParent(this);
 }
   
+void ReturnStmt::Check(){
+    expr->Check();
+    Node* current=this;
+    while((current=current->GetParent())){
+        if (current->IsFnDecl()){
+            FnDecl* fdecl= dynamic_cast<FnDecl*>(current);
+            Type* given=expr->InferType();
+            Type* expected=fdecl->GetReturnType();
+            if (!given->IsEquivalentTo(expected)){
+                ReportError::ReturnMismatch(this, given, expected);
+                return;
+            }
+        }
+    }
+}
+
 PrintStmt::PrintStmt(List<Expr*> *a) {    
     Assert(a != NULL);
     (args=a)->SetParentAll(this);

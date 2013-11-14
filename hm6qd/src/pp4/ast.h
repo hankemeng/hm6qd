@@ -52,6 +52,8 @@ class Node
     virtual Decl *FindDecl(Identifier *id, lookup l = kDeep);
     virtual Scope *PrepareScope() { return NULL; }
     virtual bool IsClassDecl() { return false; }
+    virtual bool IsFnDecl() { return false; } 
+    virtual bool IsLoopStmt() { return false; }
 
 };
    

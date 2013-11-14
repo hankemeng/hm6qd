@@ -35,7 +35,7 @@ class Decl : public Node
     virtual bool IsVarDecl() { return false; } // jdz: could use typeid/dynamic_cast for these
     // virtual bool IsClassDecl() { return false; } //moved to Node
     virtual bool IsInterfaceDecl() { return false; }
-    virtual bool IsFnDecl() { return false; } 
+    // virtual bool IsFnDecl() { return false; } 
     virtual bool IsMethodDecl() { return false; }
 };
 
@@ -100,6 +100,7 @@ class FnDecl : public Decl
     bool ConflictsWithPrevious(Decl *prev);
     bool MatchesPrototype(FnDecl *other);
     bool Implemented();
+    Type* GetReturnType(){return returnType;}
 };
 
 #endif

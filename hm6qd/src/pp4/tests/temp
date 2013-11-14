@@ -8,7 +8,8 @@ class C{
 }
 
 A func(int x, int y){
-	
+	A a;
+	return a;
 }
 
 void main(){
@@ -20,8 +21,8 @@ void main(){
 	A[] array;
 	int[] array2;
 
-	array[1];
-	array2[2];
+	//array[1]; //not working!!
+	//array2[2];
 	//a==c;
 
 	//a = NewArray(10.5,A);
@@ -30,8 +31,13 @@ void main(){
 	//Print(b+b, b+c, a);
 	//j=a.f2.f3;//legal
 	//a.f3; //illegal
-	//j.f1;
+	// j.f1;
 
-	if (a==c){}
+	// if (a==a){
+	// 	break;
+	// }
+	// while (a==a){
+	// 	break;
+	// }
 
 }
