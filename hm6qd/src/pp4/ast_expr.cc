@@ -88,12 +88,10 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
 }
 
 void FieldAccess::Check(){
-     printf("checking FieldAccess\n");
     if (base){
         // find Decl based on Expr:
         // base->FindDecl();
         base->Check();
-
         FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
         if (!_base) {
             printf("Cannot convert Expr to FieldAccess\n");
@@ -107,6 +105,7 @@ void FieldAccess::Check(){
         }
 
         baseDecl= _base->fieldDecl;
+
         if (baseDecl->IsVarDecl()){ 
             //get the classDecl for the var
             NamedType* t =dynamic_cast<NamedType*> (dynamic_cast<VarDecl*>(baseDecl)->GetDeclaredType());
@@ -122,8 +121,12 @@ void FieldAccess::Check(){
 
 
             fieldDecl=classDecl-> FindDecl(field, kShallow);
-            if (!fieldDecl) 
+            if (!fieldDecl) {
                 ReportError::FieldNotFoundInBase(field, base->InferType());
+                type=Type::errorType;
+                return;
+            }
+            type=dynamic_cast<VarDecl*> (fieldDecl)->GetDeclaredType();
         }else {
             printf("Cannot get VarDecl for base\n");
         }
@@ -139,6 +142,7 @@ void FieldAccess::Check(){
             //getting type of the variable
             InferType();
         }
+
     }
 }
 

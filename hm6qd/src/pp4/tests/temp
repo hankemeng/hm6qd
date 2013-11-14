@@ -15,12 +15,14 @@ void main(){
 	A a ;
 	B b;
 	C c;
+	int i;
+	double j;
 	//a==c;
 
 	//a = NewArray(10.5,A);
 	//a||b;
 	//func(c,b);
 	//Print(b+b, b+c, a);
-	//a.f1.f3;//legal
+	j=a.f2.f3;//legal
 	a.f3; //illegal
 }
