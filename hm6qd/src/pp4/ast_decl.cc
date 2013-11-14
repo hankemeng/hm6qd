@@ -96,6 +96,16 @@ void ClassDecl::CheckImplementAll(){
     }
 }
 
+bool ClassDecl::IsChildOf(NamedType* other){
+    if (extends && extends->IsEquivalentTo(other))
+        return true;
+    for (int i=0; i<implements->NumElements(); i++){
+        if (implements->Nth(i)->IsEquivalentTo(other))
+            return true;
+    }
+    return false;
+}
+
 InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
     Assert(n != NULL && m != NULL);
     (members=m)->SetParentAll(this);

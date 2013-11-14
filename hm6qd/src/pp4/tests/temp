@@ -1,18 +1,26 @@
 class A extends B{
-	
+	int f1;
+	C f2;
 }
 class B{}
+class C{
+	int f3;
+}
 
 A func(int x, int y){
 	
 }
 
 void main(){
-	A[] a ;
-	int b;
-	double c;
+	A a ;
+	B b;
+	C c;
+	//a==c;
+
 	//a = NewArray(10.5,A);
 	//a||b;
 	//func(c,b);
-	Print(b+b, b+c, a);
+	//Print(b+b, b+c, a);
+	//a.f1.f3;//legal
+	a.f3; //illegal
 }

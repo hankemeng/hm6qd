@@ -67,7 +67,18 @@ bool NamedType::IsClass() {
 bool NamedType::IsEquivalentTo(Type *other) {
     //handle compatibility!!
     NamedType *ot = dynamic_cast<NamedType*>(other);
-    return ot && strcmp(id->GetName(), ot->id->GetName()) == 0;
+    if (!ot) return false;
+    if (strcmp(id->GetName(), ot->id->GetName()) == 0) return true;
+
+    //Check if current class extends or implements other class/interface
+    if (IsClass()){
+        ClassDecl* cDecl=dynamic_cast<ClassDecl*> (GetDeclForType());
+        if(cDecl && cDecl->IsChildOf(ot)){
+            return true;
+
+        }
+    }
+    return false;
 }
 
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {

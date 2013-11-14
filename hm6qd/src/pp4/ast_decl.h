@@ -33,7 +33,7 @@ class Decl : public Node
     virtual bool ConflictsWithPrevious(Decl *prev);
 
     virtual bool IsVarDecl() { return false; } // jdz: could use typeid/dynamic_cast for these
-    // virtual bool IsClassDecl() { return false; }
+    // virtual bool IsClassDecl() { return false; } //moved to Node
     virtual bool IsInterfaceDecl() { return false; }
     virtual bool IsFnDecl() { return false; } 
     virtual bool IsMethodDecl() { return false; }
@@ -48,6 +48,7 @@ class VarDecl : public Decl
     VarDecl(Identifier *name, Type *type);
     void Check();
     Type *GetDeclaredType() { return type; }
+    bool IsVarDecl() { return true; }
 };
 
 class ClassDecl : public Decl 
@@ -67,6 +68,7 @@ class ClassDecl : public Decl
     Scope *PrepareScope();
     void CheckImplementAll();
     Type* GetDeclaredType(){ return cType; }
+    bool IsChildOf(NamedType* other);
 };
 
 class InterfaceDecl : public Decl 

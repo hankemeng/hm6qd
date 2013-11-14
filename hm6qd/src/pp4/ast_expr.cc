@@ -88,12 +88,47 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
 }
 
 void FieldAccess::Check(){
-    // printf("checking FieldAccess\n");
+     printf("checking FieldAccess\n");
     if (base){
         // find Decl based on Expr:
-        // base->Check();
         // base->FindDecl();
+        base->Check();
 
+        FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
+        if (!_base) {
+            printf("Cannot convert Expr to FieldAccess\n");
+        }
+
+        if (!_base->fieldDecl){
+            //Identifier not declared, already handled
+            //no need to check if class contains field
+            printf("!_base->fieldDecl\n");
+            return;
+        }
+
+        baseDecl= _base->fieldDecl;
+        if (baseDecl->IsVarDecl()){ 
+            //get the classDecl for the var
+            NamedType* t =dynamic_cast<NamedType*> (dynamic_cast<VarDecl*>(baseDecl)->GetDeclaredType());
+            if (!t){
+                //cannot convert to NamedType
+                ReportError::FieldNotFoundInBase(field, base->InferType());
+                return; //???
+            }
+            classDecl =t->GetDeclForType();
+
+
+
+
+
+            fieldDecl=classDecl-> FindDecl(field, kShallow);
+            if (!fieldDecl) 
+                ReportError::FieldNotFoundInBase(field, base->InferType());
+        }else {
+            printf("Cannot get VarDecl for base\n");
+        }
+
+        
     }else{
         //Check variable declaration
         if (!fieldDecl)
@@ -105,6 +140,30 @@ void FieldAccess::Check(){
             InferType();
         }
     }
+}
+
+Type* FieldAccess::InferType(){
+    if (type) return type;
+    lookup l=kDeep;
+    if (base){
+        l=kShallow;
+        
+
+
+
+
+    } else {
+
+        if (!fieldDecl)
+            fieldDecl= FindDecl(field);
+        if (fieldDecl){
+            type=dynamic_cast<VarDecl*>(fieldDecl)->GetDeclaredType();
+        }
+
+
+
+    }
+    return type;
 }
 
 Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
@@ -202,12 +261,7 @@ void This::Check(){
 
 Type* ArithmeticExpr::InferType(){
     if (type) return type;
-    if (left && !left->InferType()){
-        left->InferType();
-    }
-    if (right && !right->InferType()){
-        right->InferType();
-    }
+
     if (left){
         //two operands
         if (right->InferType()->IsEquivalentTo(left->InferType())){
@@ -236,12 +290,7 @@ Type* ArithmeticExpr::InferType(){
 
 Type* RelationalExpr::InferType(){
     if (type) return type;
-    if (left && !left->InferType()){
-        left->InferType();
-    }
-    if (right && !right->InferType()){
-        right->InferType();
-    }
+
     if (left){
         //two operands
         if (right->InferType()->IsEquivalentTo(left->InferType())){
@@ -264,12 +313,7 @@ Type* RelationalExpr::InferType(){
 
 Type* EqualityExpr::InferType(){
     if (type) return type;
-   if (left && !left->InferType()){
-        left->InferType();
-    }
-    if (right && !right->InferType()){
-        right->InferType();
-    }
+
     if (left){
         //two operands
         if (right->InferType()->IsEquivalentTo(left->InferType()) || left->InferType()->IsEquivalentTo(right->InferType())){
@@ -292,12 +336,6 @@ Type* EqualityExpr::InferType(){
 Type* LogicalExpr::InferType(){
     if (type) return type;
     // printf("InferType()\n");
-    if (left && !left->InferType()){
-        left->InferType();
-    }
-    if (right && !right->InferType()){
-        right->InferType();
-    }
 
     if (left){
         //two operands
@@ -323,13 +361,14 @@ Type* LogicalExpr::InferType(){
     return type;
 }
 
-void AssignExpr::Check(){
+Type* AssignExpr::InferType(){
+    if (type) return type;
 
+    if (!left->InferType()->IsEquivalentTo(right->InferType())){
+        ReportError::IncompatibleOperands(op, left->InferType(), right->InferType());
+    }
 
-
-
-
-
+    return type;
 }
 
 Type* This::InferType(){
@@ -342,16 +381,8 @@ Type* ArrayAccess::InferType(){
     if (type) return type;
     
 
-    return type;
+    return base->InferType();
 }
 
-Type* FieldAccess::InferType(){
-    if (type) return type;
-    if (!fieldDecl)
-        fieldDecl= FindDecl(field);
-    if (fieldDecl)
-        type=dynamic_cast<VarDecl*>(fieldDecl)->GetDeclaredType();
 
-    return type;
-}
 

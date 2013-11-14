@@ -140,7 +140,7 @@ class AssignExpr : public CompoundExpr
   public:
     AssignExpr(Expr *lhs, Operator *op, Expr *rhs) : CompoundExpr(lhs,op,rhs) {}
     const char *GetPrintNameForNode() { return "AssignExpr"; }
-    void Check();
+    Type* InferType();
 };
 
 class LValue : public Expr 
@@ -181,6 +181,7 @@ class FieldAccess : public LValue
     Expr *base; // will be NULL if no explicit base
     Identifier *field;
     Decl * baseDecl;
+    Decl * classDecl;
     Decl * fieldDecl;
     
   public:
