@@ -230,6 +230,7 @@ void NewArrayExpr::Check(){
     if (size->InferType()!=Type::intType){
         ReportError::NewArraySizeNotInteger(size);
     }
+    type=new ArrayType(*location, elemType);
 }
 
 PostfixExpr::PostfixExpr(LValue *lv, Operator *o) : Expr(Join(lv->GetLocation(), o->GetLocation())) {

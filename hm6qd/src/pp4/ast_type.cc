@@ -31,6 +31,11 @@ Type::Type(const char *n) {
     typeName = strdup(n);
 }
 
+bool Type::IsEquivalentTo(Type *other) { 
+    if (this==Type::errorType || other==Type::errorType)
+        return true;
+    return this == other;
+}
 
 
 	
@@ -65,6 +70,7 @@ bool NamedType::IsClass() {
 }
 
 bool NamedType::IsEquivalentTo(Type *other) {
+    if (Type::IsEquivalentTo(other)) return true;
     //handle compatibility!!
     NamedType *ot = dynamic_cast<NamedType*>(other);
     if (!ot) return false;
