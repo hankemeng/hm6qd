@@ -17,12 +17,21 @@ void main(){
 	C c;
 	int i;
 	double j;
+	A[] array;
+	int[] array2;
+
+	array[1];
+	array2[2];
 	//a==c;
 
 	//a = NewArray(10.5,A);
 	//a||b;
 	//func(c,b);
 	//Print(b+b, b+c, a);
-	j=a.f2.f3;//legal
-	a.f3; //illegal
+	//j=a.f2.f3;//legal
+	//a.f3; //illegal
+	//j.f1;
+
+	if (a==c){}
+
 }

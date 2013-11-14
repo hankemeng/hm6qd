@@ -41,6 +41,10 @@ ConditionalStmt::ConditionalStmt(Expr *t, Stmt *b) {
 }
 
 void ConditionalStmt::Check() {
+    test->Check();
+    if (test->InferType()!=Type::boolType){
+        ReportError::TestNotBoolean(test);
+    }
     body->Check();
 }
 
