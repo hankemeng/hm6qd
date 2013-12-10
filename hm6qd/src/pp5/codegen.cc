@@ -231,7 +231,7 @@ Location *CodeGenerator::GenNewArray(Location *numElems)
   GenIfZ(isNegative, pastError);
   GenMessage("Decaf runtime error: Array size is <= 0\\n");
   GenLabel(pastError);
-
+ 
   Location *arraySize = GenLoadConstant(1);
   Location *num = GenBinaryOp("+", arraySize, numElems);
   Location *four = GenLoadConstant(VarSize);
