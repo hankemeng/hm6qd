@@ -1,0 +1,4 @@
+void main(){
+     int[] array;
+     array = NewArray(1+2, int);
+}
