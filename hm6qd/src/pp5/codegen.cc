@@ -28,7 +28,7 @@ char *CodeGenerator::NewLabel()
 Location *CodeGenerator::GenLocalVar(const char* name)
 {
   Location *result = new Location(fpRelative, OffsetToFirstLocal - LocalTempNum * VarSize, name);
-  printf("CodeGenerator::GenLocalVar, new Location(fpRelative, %d, %s);\n",OffsetToFirstLocal - LocalTempNum * VarSize, name);
+  // printf("CodeGenerator::GenLocalVar, new Location(fpRelative, %d, %s);\n",OffsetToFirstLocal - LocalTempNum * VarSize, name);
   LocalTempNum++;
   return result;
 }
@@ -43,7 +43,7 @@ Location *CodeGenerator::GenTempVar()
      do that, the assert below will always fail to remind
      you this needs to be implemented  */
   Location *result = new Location(fpRelative, OffsetToFirstLocal - LocalTempNum * VarSize, temp);
-  printf("CodeGenerator::GenTempVar, new Location(fpRelative, %d, _tmp%d);\n",OffsetToFirstLocal - LocalTempNum * VarSize, nextTempNum);
+  // printf("CodeGenerator::GenTempVar, new Location(fpRelative, %d, _tmp%d);\n",OffsetToFirstLocal - LocalTempNum * VarSize, nextTempNum);
   nextTempNum++;
   LocalTempNum++;
   Assert(result != NULL);

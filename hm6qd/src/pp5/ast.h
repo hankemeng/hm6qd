@@ -65,7 +65,7 @@ class Node
     virtual bool IsLoopStmt() { return false; }
 
     virtual void Emit(CodeGenerator * cgen) {
-      printf("/**************** To be implemented!! ********************/\n");
+      // printf("/**************** To be implemented!! ********************/\n");
     };
 };
    

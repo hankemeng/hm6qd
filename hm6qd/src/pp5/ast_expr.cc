@@ -161,7 +161,7 @@ Type* FieldAccess::InferType(){
         base->InferType();
         FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
         if (!_base) {
-            printf("FieldAccess::InferType(): Cannot convert Expr to FieldAccess\n");
+            // printf("FieldAccess::InferType(): Cannot convert Expr to FieldAccess\n");
         }
 
         baseDecl= _base->fieldDecl;
@@ -176,7 +176,7 @@ Type* FieldAccess::InferType(){
             // Infer Type
             if (!fieldDecl) {
                 // ReportError::FieldNotFoundInBase(field, base->InferType());
-                printf("FieldAccess::InferType(): FieldNotFoundInBase(%s)\n",field->GetName());
+                // printf("FieldAccess::InferType(): FieldNotFoundInBase(%s)\n",field->GetName());
                 type=Type::errorType;
                 // return;
             }
@@ -261,7 +261,7 @@ Type* Call::InferType(){
         base->InferType();
         FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
         if (!_base) {
-            printf("Cannot convert Expr to FieldAccess\n");
+            // printf("Cannot convert Expr to FieldAccess\n");
         }
 
 
@@ -269,12 +269,12 @@ Type* Call::InferType(){
             funcDecl=(_base->classDecl-> FindDecl(field, kShallow));
             FnDecl* _funcDecl = dynamic_cast<FnDecl*> (funcDecl);
             if (!_funcDecl) {
-                printf("Call::InferType(): cannot find funcDecl\n");
+                // printf("Call::InferType(): cannot find funcDecl\n");
                 type=Type::errorType;
             }
             type=_funcDecl->GetReturnType();
         }else{
-            printf("Call::InferType(): no classDecl in base!\n");
+            // printf("Call::InferType(): no classDecl in base!\n");
         }
 
     }else{

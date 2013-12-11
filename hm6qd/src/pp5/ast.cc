@@ -27,7 +27,7 @@ Decl *Node::FindDecl(Identifier *idToFind, lookup l) {
     if (!nodeScope) PrepareScope();
     if (nodeScope && (mine = nodeScope->Lookup(idToFind)))
         return mine;
-    printf("Node::FindDecl(): Unable to find %s\n", idToFind->GetName());
+    // printf("Node::FindDecl(): Unable to find %s\n", idToFind->GetName());
     if (l == kDeep && parent)
         return parent->FindDecl(idToFind, l);
     return NULL;
