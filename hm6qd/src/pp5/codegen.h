@@ -171,6 +171,9 @@ class CodeGenerator {
     void DoFinalCodeGen();
 
     Location *GenNewArray(Location *numElems);
+    Location *GenArrayLen(Location *array);
+    Location* GenArrayAccess(Location* base, Location* subscript);
+
     void GenMessage(const char *message);
 };
 

@@ -9,6 +9,7 @@
 #include <string.h>
 #include "tac.h"
 #include "mips.h"
+#include "errors.h"
 
 Location* CodeGenerator::ThisPtr= new Location(fpRelative, 4, "this");
   
@@ -229,7 +230,8 @@ Location *CodeGenerator::GenNewArray(Location *numElems)
   Location *isNegative = GenBinaryOp("<", numElems, zero);
   const char *pastError = NewLabel();
   GenIfZ(isNegative, pastError);
-  GenMessage("Decaf runtime error: Array size is <= 0\\n");
+  GenMessage(err_arr_bad_size);
+  GenBuiltInCall(Halt, NULL);
   GenLabel(pastError);
  
   Location *arraySize = GenLoadConstant(1);
@@ -239,11 +241,35 @@ Location *CodeGenerator::GenNewArray(Location *numElems)
   Location *result = GenBuiltInCall(Alloc, bytes);
   GenStore(result, numElems);
   return GenBinaryOp("+", result, four);
-  return NULL;
 }
+
+Location *CodeGenerator::GenArrayLen(Location *array)
+{
+  return GenLoad(array, -4);
+}
+
+Location* CodeGenerator::GenArrayAccess(Location* base, Location* subscript){
+  Location *zero = GenLoadConstant(0);
+  Location *isNegative = GenBinaryOp("<", subscript, zero);
+  Location *size = GenLoad(base, -4);
+  Location *lessthan =GenBinaryOp("<", subscript, size);
+  Location *greaterthanzero = GenBinaryOp("==", lessthan, zero);
+  Location *badsize = GenBinaryOp("||", isNegative, greaterthanzero);
+  const char *pastError = NewLabel();
+  GenIfZ(badsize, pastError);
+  GenMessage(err_arr_out_of_bounds);
+  GenBuiltInCall(Halt, NULL);
+
+  GenLabel(pastError);
+  Location *four = GenLoadConstant(VarSize);
+  Location *offBytes = GenBinaryOp("*", four, subscript);
+  Location *addr = GenBinaryOp("+", base, offBytes);
+  Location *result = GenLoad(addr); //?
+  return result;
+}
+
 void CodeGenerator::GenMessage(const char *message)
 {
    Location *msg = GenLoadConstant(message);
    GenBuiltInCall(PrintString, msg);
-   GenBuiltInCall(Halt, NULL);
 }

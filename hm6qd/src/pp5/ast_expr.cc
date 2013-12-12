@@ -140,6 +140,14 @@ ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
     (base=b)->SetParent(this); 
     (subscript=s)->SetParent(this);
 }
+
+Location* ArrayAccess::codegen(CodeGenerator* cgen){
+    Location* baseLoc = base->codegen(cgen);
+    Location* subLoc = subscript->codegen(cgen);
+
+    return cgen->GenArrayAccess(baseLoc, subLoc);
+}
+
      
 FieldAccess::FieldAccess(Expr *b, Identifier *f) 
   : LValue(b? Join(b->GetLocation(), f->GetLocation()) : *f->GetLocation()) {
@@ -257,6 +265,7 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
 }
  
 Type* Call::InferType(){
+    if (type) return type;
     if (base){
         base->InferType();
         FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
@@ -264,6 +273,12 @@ Type* Call::InferType(){
             // printf("Cannot convert Expr to FieldAccess\n");
         }
 
+        //Check Array.length()
+        if (base->InferType() && base->InferType()->IsArrayType() && strcmp(field->GetName(), "length") == 0) {
+            // if (actuals->NumElements() != 0) 
+                // ReportError::NumArgsMismatch(field, 0, actuals->NumElements());
+            return Type::intType;
+        }
 
         if (_base->classDecl){
             funcDecl=(_base->classDecl-> FindDecl(field, kShallow));
@@ -287,9 +302,16 @@ Type* Call::InferType(){
 
 Location* Call::codegen(CodeGenerator* cgen){
 
-
     InferType();
     Location * result = NULL;
+
+    //Array.length()
+    if (base->InferType() && base->InferType()->IsArrayType() && strcmp(field->GetName(), "length") == 0) { 
+        Location* baseLoc = base->codegen(cgen);
+        result = cgen->GenArrayLen(baseLoc);
+        return result;
+    }
+
     FnDecl* _funcDecl = dynamic_cast<FnDecl*>(funcDecl);
     Assert(_funcDecl->NumArgs()==actuals->NumElements());
 
@@ -323,16 +345,16 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
 }
 
 Type * NewArrayExpr::InferType() {
+    if (type) return type;
     size->InferType();
     // if (!sizet->IsCompatibleWith(Type::intType))
     //     ReportError::NewArraySizeNotInteger(size);
     // elemType->Check();
-    return new ArrayType(*GetLocation(), elemType);
+    type = new ArrayType(*GetLocation(), elemType);
+    return type;
 }
 
 Location* NewArrayExpr::codegen(CodeGenerator* cgen){
-    /********************* To be completed ***********************/
-    size->Emit(cgen);
     Location *result = cgen->GenNewArray(size->codegen(cgen));
     return result;
 }
@@ -472,7 +494,7 @@ Type* This::InferType(){
 
 Type* ArrayAccess::InferType(){
     if (type) return type;
-    
+    subscript->InferType();
 
     return base->InferType();
 }

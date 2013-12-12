@@ -36,6 +36,7 @@ class Expr : public Stmt
       // printf("/**************** To be implemented!! ********************/\n");
       return NULL;
     };
+    virtual void Emit(CodeGenerator *cgen){codegen(cgen);}
 
 };
 
@@ -183,6 +184,7 @@ class ArrayAccess : public LValue
   public:
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
     Type* InferType();
+    Location* codegen(CodeGenerator* cgen);
 };
 
 /* Note that field access is used both for qualified names

@@ -1,4 +1,8 @@
 void main(){
      int[] array;
-     array = NewArray(1+2, int);
+     int x;
+     array = NewArray(2, int);
+     array.length();
+     x=100; //probe
+     array[3];
 }
