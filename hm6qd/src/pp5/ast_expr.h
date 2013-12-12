@@ -237,6 +237,7 @@ class NewExpr : public Expr
     
   public:
     NewExpr(yyltype loc, NamedType *clsType);
+    Location* codegen(CodeGenerator * cgen);
 };
 
 class NewArrayExpr : public Expr

@@ -128,6 +128,11 @@ Location* LogicalExpr::codegen(CodeGenerator* cgen){
 Location* AssignExpr::codegen(CodeGenerator * cgen){
     Location * dst = left->codegen(cgen);
     Location * scr = right->codegen(cgen);
+    // if (!dst)
+    //     printf("AssignExpr::codegen(): dst==NULL\n");
+    // if (!scr)
+    //     printf("AssignExpr::codegen(): scr==NULL\n");
+
 
     if (left->IsArrayAccess()){
         cgen->GenStore(dst, scr);
@@ -196,7 +201,7 @@ Type* FieldAccess::InferType(){
 
     if (base && !base->InferType()){
 
-        //printf("FieldAccess::InferType(): base && !base->InferType()\n");
+       //printf("FieldAccess::InferType(): base && !base->InferType()\n");
     }
 
     if (base && base->InferType()->IsNamedType()){
@@ -254,6 +259,8 @@ Type* FieldAccess::InferType(){
 Location* FieldAccess::codegen(CodeGenerator* cgen){
     InferType();
     // fieldDecl= FindDecl(field, kDeep);
+    if (base) base->codegen(cgen);
+    // field->Emit(cgen);
     return fieldDecl->tacloc;
 }
 
@@ -295,7 +302,7 @@ Type* Call::InferType(){
     }
 
     if (base && !base->InferType()){
-        //printf("FieldAccess::InferType(): base && !base->InferType()\n");
+       //printf("FieldAccess::InferType(): base && !base->InferType()\n");
     }
 
     if (base && base->InferType()->IsNamedType()){
@@ -377,6 +384,14 @@ Location* Call::codegen(CodeGenerator* cgen){
 NewExpr::NewExpr(yyltype loc, NamedType *c) : Expr(loc) { 
   Assert(c != NULL);
   (cType=c)->SetParent(this);
+  type=cType;
+}
+
+Location* NewExpr::codegen(CodeGenerator *cgen) { 
+    Location *result;
+    ClassDecl *cd = dynamic_cast<ClassDecl*>(cType->GetDeclForType());
+    result = cgen->GenNew(cd->GetName(), cd->fieldCount); 
+    return result;
 }
 
 

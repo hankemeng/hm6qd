@@ -45,7 +45,7 @@ Decl *Scope::Lookup(char* name)
 bool Scope::Declare(Decl *decl)
 {
   Decl *prev = table->Lookup(decl->GetName());
-  // printf("scope: Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->GetName(), prev);
+ //printf("scope: Line %d declaring %s (prev? %p)\n", decl->GetLocation()->first_line, decl->GetName(), prev);
   if (prev && decl->ConflictsWithPrevious(prev)) {// throw away second, keep first
       // printf("ConflictsWithPrevious\n");
       return false;

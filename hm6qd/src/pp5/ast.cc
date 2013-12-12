@@ -6,7 +6,7 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include <string.h> // strdup
-#include <stdio.h>  //// printf
+#include <stdio.h>  //printf
 
 Node::Node(yyltype loc) {
     location = new yyltype(loc);
@@ -26,12 +26,13 @@ Decl *Node::FindDecl(Identifier *idToFind, lookup l) {
     Decl *mine;
     if (!nodeScope) PrepareScope();
     if (nodeScope && (mine = nodeScope->Lookup(idToFind))){
-	   // printf("Node::FindDecl(): found %s\n", idToFind->GetName());
+	  //printf("Node::FindDecl(): found %s\n", idToFind->GetName());
         return mine;
     }
-   // printf("Node::FindDecl(): Unable to find %s\n", idToFind->GetName());
+  //printf("Node::FindDecl(): Unable to find %s\n", idToFind->GetName());
     if (l == kDeep && parent)
         return parent->FindDecl(idToFind, l);
+  //printf("Node::FindDecl(): Unable to find %s, returning NULL\n", idToFind->GetName());
     return NULL;
 }
 

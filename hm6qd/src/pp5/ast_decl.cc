@@ -21,7 +21,7 @@ VarDecl::VarDecl(Identifier *n, Type *t) : Decl(n) {
 }
 
 void VarDecl::Emit(CodeGenerator * cgen){
-    // printf("VarDecl::Emit(): %s\n", GetName());
+    //printf("VarDecl::Emit(): %s\n", GetName());
     if (dynamic_cast<Program*>(parent)) {
         tacloc = cgen -> GenGlobalVar(GetName());
     } else if (!dynamic_cast<ClassDecl*>(parent)) 

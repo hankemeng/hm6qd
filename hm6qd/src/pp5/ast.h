@@ -49,6 +49,8 @@ class Node
     Node *parent;
 
   public:
+    Location* tacloc;
+
     Node(yyltype loc);
     Node();
      Scope *nodeScope;
