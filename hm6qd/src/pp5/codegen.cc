@@ -273,3 +273,31 @@ void CodeGenerator::GenMessage(const char *message)
    Location *msg = GenLoadConstant(message);
    GenBuiltInCall(PrintString, msg);
 }
+
+Location *CodeGenerator::GenNew(const char *vTableLabel, int instanceSize)
+{
+  Location *size = GenLoadConstant(instanceSize);
+  Location *result = GenBuiltInCall(Alloc, size);
+  Location *vt = GenLoadLabel(vTableLabel);
+  GenStore(result, vt);
+  return result;
+}
+
+
+Location *CodeGenerator::GenDynamicDispatch(Location *rcvr, int vtableOffset, List<Location*> *args, bool hasReturnValue)
+{
+  Location *vptr = GenLoad(rcvr);
+  Assert(vtableOffset >= 0);
+  Location *m = GenLoad(vptr, vtableOffset*4);
+  return GenMethodCall(rcvr, m, args, hasReturnValue);
+}
+
+Location *CodeGenerator::GenMethodCall(Location *rcvr, Location *meth, List<Location*> *args, bool fnHasReturnValue)
+{
+  for (int i = args->NumElements()-1; i >= 0; i--)
+    GenPushParam(args->Nth(i));
+  GenPushParam(rcvr);        
+  Location *result= GenACall(meth, fnHasReturnValue);
+  GenPopParams((args->NumElements()+1)*VarSize);
+  return result;
+}

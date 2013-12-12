@@ -131,6 +131,8 @@ Location* AssignExpr::codegen(CodeGenerator * cgen){
 
     if (left->IsArrayAccess()){
         cgen->GenStore(dst, scr);
+    }else if (right->IsArrayAccess()){
+        dst=cgen->GenLoad(scr);
     }else
         cgen->GenAssign(dst, scr);
 
@@ -148,8 +150,11 @@ ArrayAccess::ArrayAccess(yyltype loc, Expr *b, Expr *s) : LValue(loc) {
 Location* ArrayAccess::codegen(CodeGenerator* cgen){
     Location* baseLoc = base->codegen(cgen);
     Location* subLoc = subscript->codegen(cgen);
-
-    return cgen->GenArrayAccess(baseLoc, subLoc);
+    Location * result = cgen->GenArrayAccess(baseLoc, subLoc);
+    
+    if (parent->IsAssignExpr())
+        return result;
+    return cgen->GenLoad(result);
 }
 
      
@@ -352,18 +357,19 @@ Location* Call::codegen(CodeGenerator* cgen){
     Assert(_funcDecl->NumArgs()==actuals->NumElements());
 
     List<Location*> *params = new List<Location*>;
-
     for (int i=0; i<actuals->NumElements(); i++){
         params->Append(actuals->Nth(i)->codegen(cgen));
     }
-    for (int i=actuals->NumElements()-1; i>=0; i--){
-        cgen->GenPushParam(params->Nth(i));
-    }
-    char label[10];
-    sprintf(label, "_%s", field->GetName());
-    result=cgen->GenLCall(label, _funcDecl->GetReturnType()!=Type::voidType);
-    cgen->GenPopParams(cgen->VarSize * actuals->NumElements());
 
+    if (base){
+        result = cgen->GenDynamicDispatch(base->codegen(cgen), _funcDecl->GetOffset(), params, _funcDecl->GetReturnType()!=Type::voidType);
+    }else{
+        for (int i=actuals->NumElements()-1; i>=0; i--){
+            cgen->GenPushParam(params->Nth(i));
+        }
+        result=cgen->GenLCall(_funcDecl->GetFuncLabel(), _funcDecl->GetReturnType()!=Type::voidType);
+        cgen->GenPopParams(cgen->VarSize * actuals->NumElements());
+    }
     return result;
 
 }

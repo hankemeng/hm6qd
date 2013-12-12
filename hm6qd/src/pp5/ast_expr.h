@@ -39,7 +39,6 @@ class Expr : public Stmt
     virtual void Emit(CodeGenerator *cgen){codegen(cgen);}
     virtual bool IsArrayAccess(){return false; }
 
-
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -162,6 +161,7 @@ class AssignExpr : public CompoundExpr
     Location * codegen(CodeGenerator * cgen);
     void Emit(CodeGenerator * cgen);
     Type* InferType();
+    bool IsAssignExpr(){return true; }
 };
 
 class LValue : public Expr 

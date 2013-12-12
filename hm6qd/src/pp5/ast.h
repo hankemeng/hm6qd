@@ -63,6 +63,7 @@ class Node
     virtual bool IsClassDecl() { return false; }
     virtual bool IsFnDecl() { return false; } 
     virtual bool IsLoopStmt() { return false; }
+    virtual bool IsAssignExpr(){return false;}
 
     virtual void Emit(CodeGenerator * cgen) {
       // printf("/**************** To be implemented!! ********************/\n");

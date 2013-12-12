@@ -41,6 +41,7 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
     cType->SetParent(this);
     convImp = NULL;
     vtable=new List<const char*>;
+    fieldCount=0;
 }
 
 // void ClassDecl::Check() {
@@ -80,7 +81,9 @@ Scope *ClassDecl::PrepareScope()
             convImp->Append(id);
       }
     }
+    MakeVTable();
     members->DeclareAll(nodeScope);
+
     // CheckImplementAll();
     members->PrepareScopeAll();
     return nodeScope;
@@ -99,15 +102,40 @@ bool ClassDecl::IsChildOf(NamedType* other){
 void ClassDecl::MakeVTable(){
     /**************** To be implemented!! offsets! ********************/
     for (int i =0; i<members->NumElements(); i++){
+        Decl *member = members->Nth(i);
+        Decl *prev = nodeScope->Lookup(member->GetId());
         FnDecl* f;
-        if ((f=dynamic_cast<FnDecl*>(members->Nth(i)))){
-            vtable->Append(f->GetFuncLabel());
+
+        //Add Functions
+        if ((f=dynamic_cast<FnDecl*>(member))){
+
+            /*************************************************/
+            if (prev) { //inherit
+                member->SetOffset(prev->GetOffset());
+                  if (vtable->NumElements() <= member->GetOffset()) {
+                    while(vtable->NumElements() < member->GetOffset())
+                        vtable->Append(NULL);
+                    vtable->Append(f->GetFuncLabel());            
+                  } else {
+                    vtable->RemoveAt(member->GetOffset());
+                    vtable->InsertAt(f->GetFuncLabel(), member->GetOffset());
+                  }
+            } else {
+                member->SetOffset(vtable->NumElements());
+                vtable->Append(f->GetFuncLabel());
+            }
+
+
+        }
+        //Add vars
+        else if (members->Nth(i)->IsVarDecl()){
+            member->SetOffset(fieldCount);
+            fieldCount += 4; 
         }
     }
 }
 
 void ClassDecl::Emit(CodeGenerator * cgen){
-    MakeVTable();
     for (int i=0; i<members->NumElements(); i++){
         members->Nth(i)->Emit(cgen);
     }

@@ -175,6 +175,11 @@ class CodeGenerator {
     Location* GenArrayAccess(Location* base, Location* subscript);
 
     void GenMessage(const char *message);
+
+    Location *GenNew(const char *vTableLabel, int instanceSize);
+    Location *GenDynamicDispatch(Location *rcvr, int vtableOffset, List<Location*> *args, bool hasReturnValue);
+    Location *GenMethodCall(Location *rcvr, Location *meth, List<Location*> *args, bool fnHasReturnValue);
+
 };
 
 #endif

@@ -29,6 +29,7 @@ class Decl : public Node
 {
   protected:
     Identifier *id;
+    int offset;
   
   public:
     Location* tacloc;
@@ -47,6 +48,8 @@ class Decl : public Node
     virtual bool IsMethodDecl() { return false; }
 
     virtual Scope* PrepareScope(){return NULL;}
+    int GetOffset(){ return offset; }
+    void SetOffset(int off){offset=off;}
 };
 
 class ClassDecl : public Decl 
@@ -60,6 +63,7 @@ class ClassDecl : public Decl
     List<InterfaceDecl*> *convImp;
 
   public:
+    int fieldCount;
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
     void Emit(CodeGenerator * cgen);
