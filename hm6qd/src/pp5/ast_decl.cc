@@ -195,3 +195,6 @@ const char* FnDecl::GetFuncLabel(){
     }
 }
 
+bool FnDecl::IsMethodDecl() 
+  { return dynamic_cast<ClassDecl*>(parent) != NULL || dynamic_cast<InterfaceDecl*>(parent) != NULL; }
+

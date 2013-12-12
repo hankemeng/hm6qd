@@ -220,6 +220,8 @@ class Call : public Expr
     
   public:
     Decl* funcDecl;
+    Decl* baseDecl;
+    Decl* classDecl;
     Call(yyltype loc, Expr *base, Identifier *field, List<Expr*> *args);
     Location* codegen(CodeGenerator* cgen);
     Type* InferType();

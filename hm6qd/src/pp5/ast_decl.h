@@ -22,6 +22,7 @@ class NamedType;
 class Identifier;
 class Stmt;
 class InterfaceDecl;
+class VarDecl;
 class Location;
 
 class Decl : public Node 
@@ -39,25 +40,13 @@ class Decl : public Node
     virtual bool ConflictsWithPrevious(Decl *prev){return false;};
 
     virtual bool IsVarDecl() { return false; } // jdz: could use typeid/dynamic_cast for these
-    // virtual bool IsClassDecl() { return false; } //moved to Node
+    virtual bool IsFieldDecl() { return false;}
+    virtual bool IsClassDecl() { return false; } //moved to Node
     virtual bool IsInterfaceDecl() { return false; }
-    // virtual bool IsFnDecl() { return false; } 
+    virtual bool IsFnDecl() { return false; } 
     virtual bool IsMethodDecl() { return false; }
 
     virtual Scope* PrepareScope(){return NULL;}
-};
-
-class VarDecl : public Decl 
-{
-  protected:
-    Type *type;
-    
-  public:
-    VarDecl(Identifier *name, Type *type);
-    Type *GetDeclaredType() { return type; }
-    bool IsVarDecl() { return true; }
-
-    void Emit(CodeGenerator * cgen);
 };
 
 class ClassDecl : public Decl 
@@ -80,6 +69,19 @@ class ClassDecl : public Decl
     Type* GetDeclaredType(){ return cType; }
     bool IsChildOf(NamedType* other);
     void MakeVTable();
+};
+
+class VarDecl : public Decl 
+{
+  protected:
+    Type *type;
+    
+  public:
+    VarDecl(Identifier *name, Type *type);
+    Type *GetDeclaredType() { return type; }
+    bool IsVarDecl() { return true; }
+    bool IsFieldDecl() { return dynamic_cast<ClassDecl*>(parent) != NULL;}
+    void Emit(CodeGenerator * cgen);
 };
 
 class InterfaceDecl : public Decl 
@@ -111,6 +113,8 @@ class FnDecl : public Decl
     // bool hasReturn(){return returnType!=Type::voidType; }
     int NumArgs(){return formals->NumElements();}
     const char* GetFuncLabel();
+    bool IsFnDecl(){return true; }
+    bool IsMethodDecl();
 };
 
 #endif

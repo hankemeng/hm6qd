@@ -74,11 +74,13 @@ class Identifier : public Node
 {
   protected:
     char *name;
+    Decl *cached;
     
   public:
     Identifier(yyltype loc, const char *name);
     friend std::ostream& operator<<(std::ostream& out, Identifier *id) { return out << id->name; }
     char* GetName(){ return name; }
+    Decl *GetDeclForId(Type *base = NULL);
 };
 
 

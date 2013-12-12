@@ -126,7 +126,6 @@ Location* LogicalExpr::codegen(CodeGenerator* cgen){
 }
 
 Location* AssignExpr::codegen(CodeGenerator * cgen){
-    // printf("/**************** To be implemented!! ********************/\n");
     Location * dst = left->codegen(cgen);
     Location * scr = right->codegen(cgen);
     cgen->GenAssign(dst, scr);
@@ -160,16 +159,49 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
     fieldDecl=NULL;
 }
 
+/*
+1. Object.field
+2. (this.)field
+3. 
+
+*/
 Type* FieldAccess::InferType(){
     if (type) return type;
-    lookup l=kDeep;
+    Type* baseType = base? base->InferType() : NULL;
+    fieldDecl = field->GetDeclForId(baseType);
+    if (fieldDecl)
+        type=dynamic_cast<VarDecl*>(fieldDecl)->GetDeclaredType();
+
+    if (!base){
+        // if no base and is field, this.field
+        if (fieldDecl && fieldDecl->IsFieldDecl()) { 
+            base = new This(*field->GetLocation()); //??
+            base->SetParent(this);
+            base->InferType();
+
+        }else if (fieldDecl && !fieldDecl->IsFieldDecl()){
+            //not inside class, global var
+        }
+    }
+
+    if (base && !base->InferType()){
+
+        //printf("FieldAccess::InferType(): base && !base->InferType()\n");
+    }
+
+    if (base && base->InferType()->IsNamedType()){
+        FieldAccess* _base = dynamic_cast<FieldAccess*>(base);
+        baseDecl = _base? _base->fieldDecl : NULL; //what about classdecl??
+        classDecl= dynamic_cast<NamedType*> (base->InferType()) -> GetDeclForType();
+    }
+
+/*
     if (base){
         l=kShallow;
-        /****************** Handle base *********************/
-        base->InferType();
+        
         FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
         if (!_base) {
-            // printf("FieldAccess::InferType(): Cannot convert Expr to FieldAccess\n");
+            //printf("FieldAccess::InferType(): Cannot convert Expr to FieldAccess\n");
         }
 
         baseDecl= _base->fieldDecl;
@@ -184,7 +216,7 @@ Type* FieldAccess::InferType(){
             // Infer Type
             if (!fieldDecl) {
                 // ReportError::FieldNotFoundInBase(field, base->InferType());
-                // printf("FieldAccess::InferType(): FieldNotFoundInBase(%s)\n",field->GetName());
+                //printf("FieldAccess::InferType(): FieldNotFoundInBase(%s)\n",field->GetName());
                 type=Type::errorType;
                 // return;
             }
@@ -203,56 +235,15 @@ Type* FieldAccess::InferType(){
                 classDecl = t->GetDeclForType();
             }
         }
-
-
-
-
     }
+*/
     return type;
 
 }
 
 Location* FieldAccess::codegen(CodeGenerator* cgen){
-    // if (base){
-    //     /**************** To be implemented!! ********************/
-    //     base->InferType();
-    //     FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
-    //     if (!_base) {
-    //         printf("Cannot convert Expr to FieldAccess\n");
-    //     }
-
-    //     baseDecl= _base->fieldDecl;
-
-    //     if (baseDecl->IsVarDecl()){ 
-    //         //get the classDecl for the var
-    //         NamedType* t =dynamic_cast<NamedType*> (dynamic_cast<VarDecl*>(baseDecl)->GetDeclaredType());
-    //         classDecl =t->GetDeclForType();
-
-    //         fieldDecl=classDecl-> FindDecl(field, kShallow);
-
-    //         // Infer Type
-    //         if (!fieldDecl) {
-    //             // ReportError::FieldNotFoundInBase(field, base->InferType());
-    //             type=Type::errorType;
-    //             // return;
-    //         }
-    //         type=dynamic_cast<VarDecl*> (fieldDecl)->GetDeclaredType();
-    //     }
-
-    // }else{
-    //     //Check variable declaration
-    //     if (!fieldDecl)
-    //         fieldDecl= FindDecl(field);
-    //     // if (!fieldDecl) {
-    //     //     ReportError::IdentifierNotDeclared(field, LookingForVariable);
-    //     // }else{
-    //     //     //getting type of the variable
-    //         InferType();
-    //     // }
-    // }
-
     InferType();
-    fieldDecl= FindDecl(field, kDeep);
+    // fieldDecl= FindDecl(field, kDeep);
     return fieldDecl->tacloc;
 }
 
@@ -266,11 +257,49 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
  
 Type* Call::InferType(){
     if (type) return type;
-    if (base){
+
+    //Check Array.length()
+    if (base && base->InferType() && base->InferType()->IsArrayType() && strcmp(field->GetName(), "length") == 0) {
+        // if (actuals->NumElements() != 0) 
+            // ReportError::NumArgsMismatch(field, 0, actuals->NumElements());
+        type= Type::intType;
+    }
+
+    Type* baseType = base? base->InferType() : NULL;
+    funcDecl = field->GetDeclForId(baseType);
+
+    // if funcDecl found and can be converted to FnDecl
+    if (funcDecl && funcDecl->IsFnDecl())
+        type=dynamic_cast<FnDecl*>(funcDecl)->GetReturnType();
+
+    if (!base){
+        // if no base and is method, this.field
+        if (funcDecl && funcDecl->IsMethodDecl()) { 
+            base = new This(*field->GetLocation()); //??
+            base->SetParent(this);
+            base->InferType();
+
+        }else if (funcDecl && !funcDecl->IsMethodDecl()){
+            //not inside class, global func
+        }
+    }
+
+    if (base && !base->InferType()){
+        //printf("FieldAccess::InferType(): base && !base->InferType()\n");
+    }
+
+    if (base && base->InferType()->IsNamedType()){
+        FieldAccess* _base = dynamic_cast<FieldAccess*>(base);
+        baseDecl = _base? _base->fieldDecl : NULL; //what about classdecl??
+        classDecl= dynamic_cast<NamedType*> (base->InferType()) -> GetDeclForType();
+    }
+
+
+/*    if (base){
         base->InferType();
         FieldAccess* _base= dynamic_cast<FieldAccess*>(base);
         if (!_base) {
-            // printf("Cannot convert Expr to FieldAccess\n");
+            //printf("Cannot convert Expr to FieldAccess\n");
         }
 
         //Check Array.length()
@@ -284,19 +313,21 @@ Type* Call::InferType(){
             funcDecl=(_base->classDecl-> FindDecl(field, kShallow));
             FnDecl* _funcDecl = dynamic_cast<FnDecl*> (funcDecl);
             if (!_funcDecl) {
-                // printf("Call::InferType(): cannot find funcDecl\n");
+                //printf("Call::InferType(): cannot find funcDecl\n");
                 type=Type::errorType;
             }
             type=_funcDecl->GetReturnType();
         }else{
-            // printf("Call::InferType(): no classDecl in base!\n");
+            //printf("Call::InferType(): no classDecl in base!\n");
         }
 
     }else{
         funcDecl = (FindDecl(field));
         FnDecl* _funcDecl = dynamic_cast<FnDecl*> (funcDecl);
-        type=_funcDecl->GetReturnType();
+        type=_funcDecl? _funcDecl->GetReturnType() : NULL;
     }
+*/
+
     return type;
 } 
 
@@ -306,7 +337,7 @@ Location* Call::codegen(CodeGenerator* cgen){
     Location * result = NULL;
 
     //Array.length()
-    if (base->InferType() && base->InferType()->IsArrayType() && strcmp(field->GetName(), "length") == 0) { 
+    if (base && base->InferType() && base->InferType()->IsArrayType() && strcmp(field->GetName(), "length") == 0) { 
         Location* baseLoc = base->codegen(cgen);
         result = cgen->GenArrayLen(baseLoc);
         return result;
@@ -382,7 +413,6 @@ Type* ArithmeticExpr::InferType(){
 
     }else{
         //unary operation
-        // printf("unary operation\n");
         if (right->InferType()==Type::intType || right->InferType()==Type::doubleType){
             type=right->InferType();
             return type;
@@ -441,7 +471,6 @@ Type* EqualityExpr::InferType(){
 
 Type* LogicalExpr::InferType(){
     if (type) return type;
-    // printf("InferType()\n");
 
     if (left){
         //two operands
@@ -455,7 +484,6 @@ Type* LogicalExpr::InferType(){
 
     }else{
         //unary operation
-        // printf("unary operation\n");
         if (right->InferType()==Type::boolType){
             type=Type::boolType;
             return type;

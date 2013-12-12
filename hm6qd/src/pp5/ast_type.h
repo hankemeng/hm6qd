@@ -34,6 +34,7 @@ class Type : public Node
     friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
     virtual bool IsEquivalentTo(Type *other) { return this == other; }
     virtual bool IsArrayType(){return false;}
+    virtual bool IsNamedType(){return false;}
 };
 
 class NamedType : public Type 
@@ -52,6 +53,7 @@ class NamedType : public Type
     bool IsClass();
     Identifier *GetId() { return id; }
     bool IsEquivalentTo(Type *other);
+    bool IsNamedType(){ return true; }
 };
 
 class ArrayType : public Type 
