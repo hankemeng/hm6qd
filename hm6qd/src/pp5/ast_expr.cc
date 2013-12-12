@@ -128,8 +128,13 @@ Location* LogicalExpr::codegen(CodeGenerator* cgen){
 Location* AssignExpr::codegen(CodeGenerator * cgen){
     Location * dst = left->codegen(cgen);
     Location * scr = right->codegen(cgen);
-    cgen->GenAssign(dst, scr);
-    return NULL;
+
+    if (left->IsArrayAccess()){
+        cgen->GenStore(dst, scr);
+    }else
+        cgen->GenAssign(dst, scr);
+
+    return dst;
 }
 void AssignExpr::Emit(CodeGenerator * cgen){
     codegen(cgen);

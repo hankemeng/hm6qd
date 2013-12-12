@@ -37,6 +37,8 @@ class Expr : public Stmt
       return NULL;
     };
     virtual void Emit(CodeGenerator *cgen){codegen(cgen);}
+    virtual bool IsArrayAccess(){return false; }
+
 
 };
 
@@ -185,6 +187,7 @@ class ArrayAccess : public LValue
     ArrayAccess(yyltype loc, Expr *base, Expr *subscript);
     Type* InferType();
     Location* codegen(CodeGenerator* cgen);
+    bool IsArrayAccess(){return true; }
 };
 
 /* Note that field access is used both for qualified names

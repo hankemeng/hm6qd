@@ -264,8 +264,8 @@ Location* CodeGenerator::GenArrayAccess(Location* base, Location* subscript){
   Location *four = GenLoadConstant(VarSize);
   Location *offBytes = GenBinaryOp("*", four, subscript);
   Location *addr = GenBinaryOp("+", base, offBytes);
-  Location *result = GenLoad(addr); //?
-  return result;
+  // Location *result = GenStore(addr, ); //?
+  return addr;
 }
 
 void CodeGenerator::GenMessage(const char *message)
